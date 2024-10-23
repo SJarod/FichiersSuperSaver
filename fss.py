@@ -1,3 +1,8 @@
+# resources : https://discord.com/developers/docs/resources/channel
+# TODO : html is not working
+# TODO : md is not working
+# TODO : sort files and attachements
+
 import discord
 from discord.ext import commands
 import os
