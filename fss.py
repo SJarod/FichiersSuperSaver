@@ -1,3 +1,5 @@
+# made with ChatGPT
+
 # resources : https://discord.com/developers/docs/resources/channel
 # TODO : html is not working
 # TODO : md is not working
