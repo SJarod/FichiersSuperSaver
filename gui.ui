@@ -53,7 +53,7 @@
           <item>
            <widget class="QPushButton" name="tokenBrowse">
             <property name="text">
-             <string>Select</string>
+             <string>Select file</string>
             </property>
            </widget>
           </item>
@@ -200,7 +200,7 @@
           <item>
            <widget class="QPushButton" name="destDirBrowse">
             <property name="text">
-             <string>PushButton</string>
+             <string>Browse</string>
             </property>
            </widget>
           </item>

@@ -15,3 +15,5 @@ pipreqs --encoding=utf8 .
 pip install -r requirements.txt
 
 del requirements.txt
+
+pause

@@ -1,9 +1,9 @@
-# made with ChatGPT
-
 # resources : https://discord.com/developers/docs/resources/channel
 # TODO : html is not working
 # TODO : md is not working
 # TODO : sort files and attachements
+
+import sys
 
 import discord
 from discord.ext import commands
@@ -166,9 +166,14 @@ async def on_ready():
     logging.info("Old message retrieval completed. The bot will now shut down.")
     await bot.close()  # Stop the bot
 
-# Read the token from the token.txt file
-with open('token.txt', 'r') as file:
-    TOKEN = file.read().strip()  # Read the token
+if (sys.argv[0] == None) :
+    # Read the token from the token.txt file
+    with open('token.txt', 'r') as file:
+        TOKEN = file.read().strip()  # Read the token
+else :
+    TOKEN = sys.argv[0]
 
 # Start the bot
 bot.run(TOKEN)
+
+# improved with ChatGPT

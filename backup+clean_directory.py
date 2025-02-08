@@ -1,8 +1,10 @@
 import os
+
 import shutil
 import hashlib
 import argparse
 import re
+
 from datetime import datetime
 
 def hash_file(file_path):
@@ -156,3 +158,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# made with Microsoft Copilot
