@@ -35,7 +35,7 @@ window = Window()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
-widget.setWindowTitle("Fichiers Super Saver")
+widget.setWindowTitle("Fichiers Super Saver 0.1.0")
 widget.setGeometry(100, 100, window.geometry().width(), window.geometry().height())
 widget.show()
 
