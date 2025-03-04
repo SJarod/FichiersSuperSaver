@@ -1,4 +1,4 @@
-scripts to backup files
+scripts to backup files (Windows compatibility only for now)
 
 - backup from the common directories of Windows PC
 - backup a specified directory and clean the directory
