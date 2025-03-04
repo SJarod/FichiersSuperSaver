@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 
 def hash_file(file_path):
-    """Generate an MD5 hash for a given file."""
+    # Generate an MD5 hash for a given file
     hasher = hashlib.md5()
     with open(file_path, 'rb') as f:
         buf = f.read()
@@ -16,7 +16,7 @@ def hash_file(file_path):
     return hasher.hexdigest()
 
 def sanitize_filename(filename):
-    """Sanitize filenames by replacing special characters."""
+    # Sanitize filenames by replacing special characters
     replacements = {
         'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
         'à': 'a', 'â': 'a', 'ä': 'a',
@@ -37,7 +37,7 @@ def sanitize_filename(filename):
     return sanitized
 
 def find_duplicates(files, verbose):
-    """Find duplicate files based on their hash values."""
+    # Find duplicate files based on their hash values
     hash_dict = {}
     duplicates = []
     for file in files:
@@ -51,11 +51,11 @@ def find_duplicates(files, verbose):
     return duplicates
 
 def calculate_total_size(files):
-    """Calculate the total size of the given files."""
+    # Calculate the total size of the given files
     return sum(os.path.getsize(file) for file in files)
 
 def generate_tree(base_dir):
-    """Generate a string representation of the directory tree with all files."""
+    # Generate a string representation of the directory tree with all files
     tree_str = f"{os.path.abspath(base_dir)}\n"
     for root, dirs, files in os.walk(base_dir):
         level = root.replace(base_dir, '').count(os.sep)
@@ -67,7 +67,7 @@ def generate_tree(base_dir):
     return tree_str
 
 def suggest_tree(files, target_dir):
-    """Generate a new file tree suggestion without duplicates."""
+    # Generate a new file tree suggestion without duplicates
     tree = {}
     for file in files:
         file_name = os.path.basename(file)
@@ -81,7 +81,7 @@ def suggest_tree(files, target_dir):
     return tree
 
 def write_backup_info(source_dir, duplicates, new_tree):
-    """Write backup information to a file."""
+    # Write backup information to a file
     output_file = f"backup_info_{os.path.basename(source_dir)}.txt"
     original_tree = generate_tree(source_dir)
     suggested_tree = generate_tree(os.path.dirname(next(iter(new_tree.values()), source_dir)))
@@ -108,7 +108,7 @@ def write_backup_info(source_dir, duplicates, new_tree):
     return output_file
 
 def move_or_copy_files(tree, operation, verbose):
-    """Move or copy files to their new location."""
+    # Move or copy files to their new location
     for original, suggestion in tree.items():
         os.makedirs(os.path.dirname(suggestion), exist_ok=True)
         if operation == 'm':

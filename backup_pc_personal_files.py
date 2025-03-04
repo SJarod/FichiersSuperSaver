@@ -26,6 +26,17 @@ def backup_files(file_list, destination, verbose):
             if verbose:
                 print(f"Copied file: \"{file}\" to \"{target_path}\"")
         elif file.is_dir():
+            listDir = 0
+            try :
+                listDir = len(os.listdir(file))
+            except :
+                print("Permission denied : ", file)
+                continue
+
+            if listDir == 0 :
+                print("Directory " + str(file) + " is empty")
+                continue
+
             shutil.copytree(file, target_path, dirs_exist_ok=True)
             if verbose:
                 print(f"Copied directory: \"{file}\" to \"{target_path}\"")
@@ -115,4 +126,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# made with ChatGPT
+# improved with ChatGPT

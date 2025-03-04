@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>471</width>
-    <height>493</height>
+    <height>681</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>451</width>
-     <height>471</height>
+     <height>661</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -34,14 +34,14 @@
          <x>10</x>
          <y>20</y>
          <width>431</width>
-         <height>89</height>
+         <height>175</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Token</string>
+           <string>Enter a valid Discord bot Token or select a Token file (.txt)</string>
           </property>
          </widget>
         </item>
@@ -60,9 +60,56 @@
          </layout>
         </item>
         <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Save directory (Destination directory)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLineEdit" name="fssSaveDirField"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="fssSaveDirBrowse">
+            <property name="text">
+             <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Open explorer upon backup</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="backupDiscord">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Backup Discord servers (Fichiers Super Saver)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -81,14 +128,14 @@
          <x>10</x>
          <y>20</y>
          <width>431</width>
-         <height>89</height>
+         <height>125</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Save directory</string>
+           <string>Save directory (Destination directory)</string>
           </property>
          </widget>
         </item>
@@ -107,9 +154,35 @@
          </layout>
         </item>
         <item>
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>Open explorer upon backup</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="backupPCPersonal">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Backup PC (Windows) personal files</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -128,7 +201,7 @@
          <x>10</x>
          <y>20</y>
          <width>431</width>
-         <height>111</height>
+         <height>134</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -207,9 +280,38 @@
          </layout>
         </item>
         <item>
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="text">
+           <string>Open explorer upon backup</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="tristate">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="backupDirectory">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Backup and Clean directory</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar_3">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
