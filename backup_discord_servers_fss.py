@@ -176,4 +176,4 @@ else :
 # Start the bot
 bot.run(TOKEN)
 
-# improved with ChatGPT
+# backed by ChatGPT

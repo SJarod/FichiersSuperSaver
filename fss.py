@@ -8,54 +8,44 @@ from PyQt5.uic import loadUi
 
 import subprocess
 
-class Window(QDialog) :
+class Window(QtWidgets.QMainWindow) :
     def __init__(self) :
         super(Window, self).__init__()
-        loadUi("gui.ui", self)
+        loadUi("main.ui", self)
 
-        # fss
-        self.tokenBrowse.clicked.connect(self.select_token)
-        self.fssSaveDirBrowse.clicked.connect(self.select_fss_dir)
-        self.backupDiscord.clicked.connect(self.backup_discord)
+        self.fssTokenBrowse.clicked.connect(self.fss_select_token)
+        self.fssDestBrowse.clicked.connect(self.fss_select_dest)
 
-        # personal files
-        self.saveDirBrowse.clicked.connect(self.select_pf_dir)
-        self.backupPCPersonal.clicked.connect(self.backup_personal_files)
+        self.pfsDestBrowse.clicked.connect(self.pfs_select_dest)
 
-        # save+clean+er
-        self.sourceDirBrowse.clicked.connect(self.select_source_sc_dir)
-        self.destDirBrowse.clicked.connect(self.select_dest_sc_dir)
-        self.backupDirectory.clicked.connect(self.backup_directory)
+        self.sdsSrcBrowse.clicked.connect(self.sds_select_source)
+        self.sdsDestBrowse.clicked.connect(self.sds_select_dest)
 
-    def select_destination_directory(self) :
-        return QFileDialog.getExistingDirectory(self, "Select a destination directory")
+    def browse_directory(self) :
+        return QFileDialog.getExistingDirectory(self, "Select a directory")
     
     def open_explorer(self, dir) :
+        # TODO : other platforms compatibility (/ vs \\)
         dir = dir.replace("/", "\\")
         dir = dir + "\\"
         subprocess.Popen(fr'explorer /select, "{dir}"')
 
-    # fss
-    def select_token(self) :
+    def fss_select_token(self) :
         filenames = QFileDialog.getOpenFileName(self, "Select token file", "", "Text files (*.txt)")
-        if filenames == None :
+        if filenames[0] == '' :
             return
         
         f = open(filenames[0], "r")
         self.tokenField.setText(f.readlines()[0])
 
-        self.backupDiscord.setEnabled(self.fssSaveDirField.text() != None)
-
-    def select_fss_dir(self) :
-        dir = self.select_destination_directory()
-        if dir == None :
+    def fss_select_dest(self) :
+        dir = self.browse_directory()
+        if dir == '' :
             return
         
         self.fssSaveDirField.setText(dir)
 
-        self.backupDiscord.setEnabled(self.tokenField.text() != None)
-
-    def backup_discord(self) :
+    def fss_execute(self) :
         if (self.tokenField.text() == "") :
             print("Please specify the Discord bot token")
             return
@@ -65,39 +55,34 @@ class Window(QDialog) :
             self.open_explorer(self.saveDirField.text())
 
 
-    # personal files
-    def select_pf_dir(self) :
-        dir = self.select_destination_directory()
-        if dir == None :
+    def pfs_select_dest(self) :
+        dir = self.browse_directory()
+        if dir == '' :
             return
         
         self.saveDirField.setText(dir)
-        self.backupPCPersonal.setEnabled(True)
 
-    def backup_personal_files(self) :
+    def pfs_execute(self) :
         os.system("backup_pc_personal_files.py -v -y -d " + self.saveDirField.text())
 
         if self.checkBox_2.isChecked() :
             self.open_explorer(self.saveDirField.text())
 
-    # save+clean+er
-    def select_source_sc_dir(self) :
-        dir = self.select_destination_directory()
-        if dir == None :
+    def sds_select_source(self) :
+        dir = self.browse_directory()
+        if dir == '' :
             return
         
         self.sourceDirField.setText(dir)
-        self.backupDirectory.setEnabled(self.destDirField.text() != None)
 
-    def select_dest_sc_dir(self) :
-        dir = self.select_destination_directory()
-        if dir == None :
+    def sds_select_dest(self) :
+        dir = self.browse_directory()
+        if dir == '' :
             return
         
         self.destDirField.setText(dir)
-        self.backupDirectory.setEnabled(self.sourceDirField.text() != None)
 
-    def backup_directory(self) :
+    def sds_execute(self) :
         os.system("backup+clean_directory.py")
 
         if self.checkBox_3.isChecked() :
@@ -109,7 +94,7 @@ window = Window()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
-widget.setWindowTitle("Fichiers Super Saver 0.1.0")
+widget.setWindowTitle("Fichiers Super Saver 0.2.1")
 widget.setGeometry(100, 100, window.geometry().width(), window.geometry().height())
 widget.show()
 
