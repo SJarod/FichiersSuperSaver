@@ -3,12 +3,14 @@ import sys
 import os
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
+from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.uic import loadUi
 
 import subprocess
 
 class Window(QtWidgets.QMainWindow) :
+    id = -1
+
     def __init__(self) :
         super(Window, self).__init__()
         loadUi("main.ui", self)
@@ -21,6 +23,15 @@ class Window(QtWidgets.QMainWindow) :
         self.sdsSrcBrowse.clicked.connect(self.sds_select_source)
         self.sdsDestBrowse.clicked.connect(self.sds_select_dest)
 
+        self.executeButton.clicked.connect(self.run)
+
+
+    def ready(self, bReady: bool) :
+        self.id = self.tabWidget.currentIndex()
+
+        self.executeButton.setEnabled(bReady)
+        self.openExplorer.setEnabled(bReady)
+
     def browse_directory(self) :
         return QFileDialog.getExistingDirectory(self, "Select a directory")
     
@@ -30,29 +41,41 @@ class Window(QtWidgets.QMainWindow) :
         dir = dir + "\\"
         subprocess.Popen(fr'explorer /select, "{dir}"')
 
+    def run(self) :
+        if (self.id == 0) :
+            self.fss_execute()
+        elif (self.id == 1) :
+            self.pfs_execute()
+        elif (self.id == 2) :
+            self.sds_execute()
+
+
+
+
     def fss_select_token(self) :
         filenames = QFileDialog.getOpenFileName(self, "Select token file", "", "Text files (*.txt)")
         if filenames[0] == '' :
             return
         
         f = open(filenames[0], "r")
-        self.tokenField.setText(f.readlines()[0])
+        self.fssTokenField.setText(f.readlines()[0])
 
     def fss_select_dest(self) :
         dir = self.browse_directory()
         if dir == '' :
             return
         
-        self.fssSaveDirField.setText(dir)
+        self.fssDestField.setText(dir)
 
     def fss_execute(self) :
-        if (self.tokenField.text() == "") :
+        if (self.fssTokenField.text() == "") :
             print("Please specify the Discord bot token")
             return
-        os.system("backup_discord_servers_fss.py " + self.tokenField.text())
+        os.system("backup_discord_servers_fss.py " + self.fssTokenField.text())
 
-        if self.checkBox.isChecked() :
-            self.open_explorer(self.saveDirField.text())
+        if self.openExplorer.isChecked() :
+            self.open_explorer(self.fssDestField.text())
+
 
 
     def pfs_select_dest(self) :
@@ -60,33 +83,37 @@ class Window(QtWidgets.QMainWindow) :
         if dir == '' :
             return
         
-        self.saveDirField.setText(dir)
+        self.pfsDestField.setText(dir)
+        t = self.pfsDestField.text()
+        self.ready(t != "")
 
     def pfs_execute(self) :
-        os.system("backup_pc_personal_files.py -v -y -d " + self.saveDirField.text())
+        os.system("backup_pc_personal_files.py -v -y -d " + self.pfsDestField.text())
 
-        if self.checkBox_2.isChecked() :
-            self.open_explorer(self.saveDirField.text())
+        if self.openExplorer.isChecked() :
+            self.open_explorer(self.pfsDestField.text())
+
+
 
     def sds_select_source(self) :
         dir = self.browse_directory()
         if dir == '' :
             return
         
-        self.sourceDirField.setText(dir)
+        self.sdsSrcField.setText(dir)
 
     def sds_select_dest(self) :
         dir = self.browse_directory()
         if dir == '' :
             return
         
-        self.destDirField.setText(dir)
+        self.sdsDestField.setText(dir)
 
     def sds_execute(self) :
         os.system("backup+clean_directory.py")
 
-        if self.checkBox_3.isChecked() :
-            self.open_explorer(self.saveDirField.text())
+        if self.openExplorer.isChecked() :
+            self.open_explorer(self.sdsDestField.text())
 
 
 app = QApplication(sys.argv)
