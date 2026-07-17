@@ -1,5 +1,4 @@
 # resources : https://discord.com/developers/docs/resources/channel
-# TODO : html is not working
 # TODO : md is not working
 # TODO : sort files and attachements
 
@@ -12,6 +11,7 @@ from datetime import datetime
 import aiohttp
 import logging
 import re
+import ntpath
 
 # Function to generate a safe filename
 def sanitize_filename(filename):
@@ -54,39 +54,55 @@ def save_message_as_html_and_markdown(guild_name, category_name, channel_name, a
     with open(md_file_path, 'a', encoding='utf-8') as f:
         f.write(f"**{author_name}** [{timestamp}]: {content}\n\n")
 
+# https://stackoverflow.com/a/57896232
+def uniquify(path):
+    filename, extension = os.path.splitext(path)
+    counter = 1
+
+    while os.path.exists(path):
+        path = filename + " (" + str(counter) + ")" + extension
+        counter += 1
+
+    return path
+
+# https://stackoverflow.com/a/8384788
+def path_leaf(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
+
 # Function to save files or images
 async def save_attachment(channel, author_name, attachment):
     attachment_folder = get_attachment_folder(channel.guild.name, channel.category.name if channel.category else "No Category")
     file_name = sanitize_filename(attachment.filename)
     file_path = os.path.join(attachment_folder, file_name)
+    unique_file_path = uniquify(file_path)
+    unique_file_name = path_leaf(unique_file_path)
 
     # Download the file
     async with aiohttp.ClientSession() as session:
         async with session.get(attachment.url) as response:
             if response.status == 200:
-                with open(file_path, 'wb') as f:
+                with open(unique_file_path, 'wb') as f :
                     f.write(await response.read())
-                logging.info(f"File downloaded: {file_name} in {attachment_folder}")
+                logging.info(f"File downloaded: {file_name} as {unique_file_name} in {attachment_folder}")
             else:
                 logging.error(f"Download error for {file_name}: {response.status}")
 
-    # Add the attachment link to the corresponding HTML and Markdown files
+    # html
     html_file_path = get_file_name(channel.guild.name, channel.category.name if channel.category else "No Category", channel.name, 'html')
-    md_file_path = get_file_name(channel.guild.name, channel.category.name if channel.category else "No Category", channel.name, 'md')
-
-    # Add HTML content for attachment preview
     with open(html_file_path, 'a', encoding='utf-8') as f:
         if attachment.url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')):
-            f.write(f"<p><b>{author_name}</b> [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: <img src='attachments/{file_name}' alt='{file_name}' style='max-width:300px;'/></p>\n")
+            f.write(f"<p><b>{author_name}</b> [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: <img src='attachments/{unique_file_name}' alt='{unique_file_name}' style='max-width:300px;'/></p>\n")
         else:
-            f.write(f"<p><b>{author_name}</b> [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: <a href='attachments/{file_name}'>{file_name}</a></p>\n")
+            f.write(f"<p><b>{author_name}</b> [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: <a href='attachments/{unique_file_name}'>{unique_file_name}</a></p>\n")
 
-    # Add Markdown content for attachment
+    # mark down
+    md_file_path = get_file_name(channel.guild.name, channel.category.name if channel.category else "No Category", channel.name, 'md')
     with open(md_file_path, 'a', encoding='utf-8') as f:
         if attachment.url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')):
-            f.write(f"**{author_name}** [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: ![Preview]({{attachments/{file_name}}})\n")
+            f.write(f"**{author_name}** [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: ![Preview]({{attachments/{unique_file_name}}})\n")
         else:
-            f.write(f"**{author_name}** [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: [Download Attachment](attachments/{file_name})\n\n")
+            f.write(f"**{author_name}** [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: [Download Attachment](attachments/{unique_file_name})\n\n")
 
 # Function to retrieve and save old messages from a channel
 async def save_old_messages(channel):
@@ -120,21 +136,20 @@ def create_global_files(guild_name):
 
 # Function to add links to global files
 def add_to_global_files(global_html_path, global_md_path, guild_name, channel):
-    channel_name = channel.name  # Get the channel name
+    path_to_html_file = os.path.relpath(get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel.name, 'html'), os.path.dirname(global_html_path))
+    path_to_md_file = os.path.relpath(get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel.name, 'md'), os.path.dirname(global_md_path))
+
     with open(global_html_path, 'a', encoding='utf-8') as f:
-        f.write(f"<h2>{channel_name}</h2>\n")
+        f.write(f"<h2>{channel.name}</h2>\n")
         f.write(f"<ul>\n")
-        f.write(f"<li><a href='{get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'html')}'>{channel_name}.html</a></li>\n")
-        f.write(f"<li><a href='{get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'md')}'>{channel_name}.md</a></li>\n")
+        f.write(f"<li><a href='{path_to_html_file}'>{channel.name}.html</a></li>\n")
+        f.write(f"<li><a href='{path_to_md_file}'>{channel.name}.md</a></li>\n")
         f.write(f"</ul>\n")
 
     with open(global_md_path, 'a', encoding='utf-8') as f:
-        f.write(f"## {channel_name}\n")
-        f.write(f"- [{channel_name}.html]({get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'html')})\n")
-        f.write(f"- [{channel_name}.md]({get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'md')})\n\n")
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        f.write(f"## {channel.name}\n")
+        f.write(f"- [{channel.name}.html]({path_to_html_file})\n")
+        f.write(f"- [{channel.name}.md]({path_to_md_file})\n\n")
 
 # Create a bot with a prefix, here "!".
 intents = discord.Intents.default()
@@ -173,5 +188,10 @@ else :
 
 if not os.path.exists(BASE_FOLDER):
     os.makedirs(BASE_FOLDER)
+
+logging.basicConfig(filename=BASE_FOLDER + "/log.txt",
+                    filemode='a',
+                    level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 bot.run(TOKEN)
