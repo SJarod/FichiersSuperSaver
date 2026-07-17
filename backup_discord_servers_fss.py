@@ -13,21 +13,6 @@ import aiohttp
 import logging
 import re
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-# Create a bot with a prefix, here "!".
-intents = discord.Intents.default()
-intents.messages = True
-intents.message_content = True
-intents.guilds = True
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-# Base directory to save HTML files and attachments
-BASE_FOLDER = "discord_backup"
-if not os.path.exists(BASE_FOLDER):
-    os.makedirs(BASE_FOLDER)
-
 # Function to generate a safe filename
 def sanitize_filename(filename):
     # Remove invalid characters and ensure it retains the file extension
@@ -148,7 +133,16 @@ def add_to_global_files(global_html_path, global_md_path, guild_name, channel):
         f.write(f"- [{channel_name}.html]({get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'html')})\n")
         f.write(f"- [{channel_name}.md]({get_file_name(guild_name, channel.category.name if channel.category else 'No Category', channel_name, 'md')})\n\n")
 
-# Trigger when the bot is ready
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Create a bot with a prefix, here "!".
+intents = discord.Intents.default()
+intents.messages = True
+intents.message_content = True
+intents.guilds = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+
 @bot.event
 async def on_ready():
     logging.info(f'The bot is connected as {bot.user}!')
@@ -166,14 +160,18 @@ async def on_ready():
     logging.info("Old message retrieval completed. The bot will now shut down.")
     await bot.close()  # Stop the bot
 
-if (sys.argv[0] == None) :
-    # Read the token from the token.txt file
+BASE_FOLDER = "discord_backup"
+if (len(sys.argv) == 1) :
     with open('token.txt', 'r') as file:
-        TOKEN = file.read().strip()  # Read the token
+        TOKEN = file.read().strip()
 else :
-    TOKEN = sys.argv[0]
+    for i in range(len(sys.argv)) :
+        if sys.argv[i] == "-t" :
+            TOKEN = sys.argv[i + 1]
+        elif sys.argv[i] == "-d" :
+            BASE_FOLDER = sys.argv[i + 1]
 
-# Start the bot
+if not os.path.exists(BASE_FOLDER):
+    os.makedirs(BASE_FOLDER)
+
 bot.run(TOKEN)
-
-# backed by ChatGPT

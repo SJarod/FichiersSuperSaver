@@ -59,6 +59,7 @@ class Window(QtWidgets.QMainWindow) :
         
         f = open(filenames[0], "r")
         self.fssTokenField.setText(f.readlines()[0])
+        self.ready(self.fss_condition())
 
     def fss_select_dest(self) :
         dir = self.browse_directory()
@@ -66,12 +67,18 @@ class Window(QtWidgets.QMainWindow) :
             return
         
         self.fssDestField.setText(dir)
+        self.ready(self.fss_condition())
 
+    def fss_condition(self) :
+        t1 = self.fssTokenField.text()
+        t2 = self.fssDestField.text()
+        return t1 != "" and t2 != ""
+    
     def fss_execute(self) :
         if (self.fssTokenField.text() == "") :
             print("Please specify the Discord bot token")
             return
-        os.system("backup_discord_servers_fss.py " + self.fssTokenField.text())
+        os.system("backup_discord_servers_fss.py -t " + self.fssTokenField.text() + " -d " + self.fssDestField.text())
 
         if self.openExplorer.isChecked() :
             self.open_explorer(self.fssDestField.text())
@@ -84,8 +91,11 @@ class Window(QtWidgets.QMainWindow) :
             return
         
         self.pfsDestField.setText(dir)
+        self.ready(self.pfs_condition())
+
+    def pfs_condition(self) :
         t = self.pfsDestField.text()
-        self.ready(t != "")
+        return t != ""
 
     def pfs_execute(self) :
         os.system("backup_pc_personal_files.py -v -y -d " + self.pfsDestField.text())
@@ -108,6 +118,9 @@ class Window(QtWidgets.QMainWindow) :
             return
         
         self.sdsDestField.setText(dir)
+
+    def sds_condition(self) :
+        return False
 
     def sds_execute(self) :
         os.system("backup+clean_directory.py")
