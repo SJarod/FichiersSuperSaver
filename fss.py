@@ -8,6 +8,8 @@ from PyQt5.uic import loadUi
 
 import subprocess
 
+# TODO : bug save discord nom de fichier trop long
+
 class Window(QtWidgets.QMainWindow) :
     id = -1
 
@@ -78,6 +80,7 @@ class Window(QtWidgets.QMainWindow) :
         if (self.fssTokenField.text() == "") :
             print("Please specify the Discord bot token")
             return
+        # TODO : show a dialog window with a progress bar (gui.ui)
         os.system("backup_discord_servers_fss.py -t " + self.fssTokenField.text() + " -d " + self.fssDestField.text())
 
         if self.openExplorer.isChecked() :

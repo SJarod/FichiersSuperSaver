@@ -7,6 +7,13 @@ import re
 
 from datetime import datetime
 
+# TODO : 1 selectionner tous les dossiers à sauvegarder
+# TODO : 2 détection des diffs entre les données à save et les données deja save
+# TODO : 3 copie de toutes les données vers le disque
+# TODO : 4 détection des doublons
+# TODO : 5 création de raccourcis vers tous les fichiers et dossiers pour avoir un tri personnalisé sans toucher au vrai tri
+# TODO : 6 re détection des diffs
+
 def hash_file(file_path):
     # Generate an MD5 hash for a given file
     hasher = hashlib.md5()

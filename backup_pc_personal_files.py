@@ -3,6 +3,8 @@ import shutil
 import argparse
 from pathlib import Path
 
+# TODO : save les trucs d’un tel android
+
 # Function to calculate total size of files
 def calculate_total_size(file_list):
     total_size = 0
